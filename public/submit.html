@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>LibreFind App Submissions</title>
+
+        <!-- Vendor -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            rel="stylesheet"
+        />
+
+        <!-- App CSS -->
+        <link rel="stylesheet" href="/src/css/submit.css" />
+    </head>
+
+    <body>
+        <!-- Toast -->
+        <div id="toast"></div>
+
+        <!-- Navbar -->
+        <nav class="bg-zinc-900 border-b border-zinc-800 p-4 sticky top-0 z-30">
+            <div class="max-w-4xl mx-auto flex justify-between items-center">
+                <span class="font-bold text-xl">LibreFind Submit</span>
+                <div id="nav-user" class="hidden items-center gap-4">
+                    <span id="nav-email" class="text-sm text-zinc-400"></span>
+                    <button
+                        onclick="logout()"
+                        class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white text-sm rounded-lg border border-zinc-700"
+                    >
+                        <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-4xl mx-auto p-6">
+            <div
+                id="impact-stats"
+                class="mb-8 p-6 bg-zinc-900 border border-zinc-800 rounded-2xl hidden"
+            >
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-zinc-100 text-lg font-bold">
+                            Global Digital Sovereignty
+                        </h2>
+                        <p class="text-zinc-500 text-sm">
+                            Real-time ecosystem health across
+                            <span
+                                id="total-audited"
+                                class="text-zinc-300 font-mono"
+                                >--</span
+                            >
+                            devices
+                        </p>
+                    </div>
+                    <div
+                        class="h-10 w-10 bg-zinc-800 rounded-full flex items-center justify-center border border-zinc-700"
+                    >
+                        <i class="fas fa-shield-alt text-blue-500"></i>
+                    </div>
+                </div>
+
+                <div
+                    class="flex h-6 w-full rounded-full overflow-hidden bg-zinc-800 mb-8 border-2 border-zinc-900 shadow-inner"
+                >
+                    <div
+                        id="bar-sovereign"
+                        class="bg-green-500 transition-all duration-1000 ease-out"
+                        style="width: 0%"
+                    ></div>
+                    <div
+                        id="bar-transitioning"
+                        class="bg-yellow-500 transition-all duration-1000 ease-out"
+                        style="width: 0%"
+                    ></div>
+                    <div
+                        id="bar-captured"
+                        class="bg-zinc-600 transition-all duration-1000 ease-out"
+                        style="width: 0%"
+                    ></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <p
+                                class="text-xs font-bold text-zinc-100 uppercase tracking-tighter"
+                            >
+                                Sovereign (80%+ FOSS)
+                            </p>
+                        </div>
+                        <p class="text-[11px] text-zinc-500 leading-relaxed">
+                            Users who have successfully reclaimed their digital
+                            freedom. Their data stays their own.
+                        </p>
+                        <p
+                            class="text-sm font-mono font-bold text-green-500"
+                            id="count-sovereign"
+                        >
+                            0
+                        </p>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <p
+                                class="text-xs font-bold text-zinc-100 uppercase tracking-tighter"
+                            >
+                                Transitioning (40-79%)
+                            </p>
+                        </div>
+                        <p class="text-[11px] text-zinc-500 leading-relaxed">
+                            Users actively replacing proprietary apps. They are
+                            halfway to full sovereignty.
+                        </p>
+                        <p
+                            class="text-sm font-mono font-bold text-yellow-500"
+                            id="count-transitioning"
+                        >
+                            0
+                        </p>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-zinc-500"></div>
+                            <p
+                                class="text-xs font-bold text-zinc-100 uppercase tracking-tighter"
+                            >
+                                Captured (&lt;40%)
+                            </p>
+                        </div>
+                        <p class="text-[11px] text-zinc-500 leading-relaxed">
+                            Users heavily dependent on Big Tech ecosystems. Your
+                            submissions help these users most.
+                        </p>
+                        <p
+                            class="text-sm font-mono font-bold text-zinc-400"
+                            id="count-captured"
+                        >
+                            0
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AUTH -->
+            <div
+                id="screen-auth"
+                class="flex items-center justify-center min-h-[70vh]"
+            >
+                <div
+                    class="bg-zinc-900 p-8 rounded-2xl border border-zinc-800 w-full max-w-md"
+                >
+                    <h2 class="text-2xl font-bold mb-1">Welcome</h2>
+                    <p class="text-zinc-400 mb-6">
+                        Sign in to submit or link apps
+                    </p>
+                    <div class="space-y-4">
+                        <input
+                            id="auth-email"
+                            type="email"
+                            placeholder="Email"
+                            class="form-input"
+                        />
+                        <input
+                            id="auth-password"
+                            type="password"
+                            placeholder="Password"
+                            class="form-input"
+                            onkeyup="if (event.key === 'Enter') login();"
+                        />
+                        <div class="flex items-center gap-3">
+                            <label class="flex items-center gap-2 text-sm">
+                                <input
+                                    id="remember-me"
+                                    type="checkbox"
+                                    class="h-4 w-4"
+                                />
+                                <span class="text-zinc-300">Remember me</span>
+                            </label>
+                            <div class="flex-1"></div>
+                            <button
+                                onclick="login()"
+                                id="auth-btn"
+                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold"
+                            >
+                                Sign In
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 h-px bg-zinc-700"></div>
+                            <span
+                                class="text-xs text-zinc-500 uppercase tracking-wider"
+                                >or</span
+                            >
+                            <div class="flex-1 h-px bg-zinc-700"></div>
+                        </div>
+                        <button
+                            onclick="loginWithGithub()"
+                            id="github-btn"
+                            class="w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg font-semibold border border-zinc-700 flex items-center justify-center gap-2"
+                        >
+                            <i class="fab fa-github text-lg"></i> Continue with
+                            GitHub
+                        </button>
+                        <p class="text-center text-sm">
+                            <button
+                                onclick="toggleRegister()"
+                                id="toggle-register"
+                                class="text-blue-400 hover:text-blue-300"
+                            >
+                                Need an account? Register
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBMISSION -->
+            <div id="screen-submit" class="hidden">
+                <div
+                    class="mb-6 p-4 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-between"
+                >
+                    <div>
+                        <h2 class="font-bold text-lg">
+                            What are you submitting?
+                        </h2>
+                        <p class="text-sm text-zinc-400">
+                            Choose the type of contribution.
+                        </p>
+                    </div>
+                    <a
+                        href="https://github.com/jksalcedo/librefind/wiki/How-to-Contribute"
+                        target="_blank"
+                        class="text-blue-400 text-sm"
+                    >
+                        <i class="fas fa-book mr-1"></i> Contribution Guide
+                    </a>
+                </div>
+
+                <!-- Tab Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button
+                        onclick="switchTab('foss')"
+                        id="tab-foss"
+                        class="px-5 py-2 rounded-full border font-medium transition-colors"
+                    >
+                        FOSS Alternative
+                    </button>
+                    <button
+                        onclick="switchTab('target')"
+                        id="tab-target"
+                        class="px-5 py-2 rounded-full border font-medium transition-colors"
+                    >
+                        Proprietary Target
+                    </button>
+                    <button
+                        onclick="switchTab('linking')"
+                        id="tab-linking"
+                        class="px-5 py-2 rounded-full border font-medium transition-colors"
+                    >
+                        App Linking
+                    </button>
+                </div>
+
+                <!-- Form Card -->
+                <div
+                    class="bg-zinc-900 rounded-2xl border border-zinc-800 p-6 relative"
+                >
+                    <!-- Loading Overlay -->
+                    <div
+                        id="submit-overlay"
+                        class="hidden absolute inset-0 bg-zinc-900/80 backdrop-blur-sm z-20 rounded-2xl flex flex-col items-center justify-center"
+                    >
+                        <i
+                            class="fas fa-spinner fa-spin text-blue-500 text-4xl mb-3"
+                        ></i>
+                        <span class="text-lg font-medium">Submitting...</span>
+                    </div>
+
+                    <!-- FOSS Form -->
+                    <div id="form-foss" class="space-y-4">
+                        <h3
+                            class="text-lg font-semibold border-b border-zinc-800 pb-2"
+                        >
+                            New FOSS Application
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input
+                                id="foss-name"
+                                type="text"
+                                placeholder="App Name *"
+                                class="form-input"
+                            />
+                            <div>
+                                <input
+                                    id="foss-pkg"
+                                    type="text"
+                                    placeholder="Package Name (e.g. org.mozilla.firefox) *"
+                                    class="form-input"
+                                    oninput="checkDuplicate('solutions', this.value, 'foss-dup-warn')"
+                                />
+                                <p
+                                    id="foss-dup-warn"
+                                    class="text-red-400 text-xs mt-1 hidden"
+                                >
+                                    <i
+                                        class="fas fa-exclamation-circle mr-1"
+                                    ></i
+                                    >This package already exists as a FOSS App.
+                                </p>
+                            </div>
+                        </div>
+                        <textarea
+                            id="foss-desc"
+                            rows="3"
+                            placeholder="Description *"
+                            class="form-input resize-y"
+                        ></textarea>
+                        <div
+                            class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-zinc-800/50"
+                        >
+                            <div>
+                                <input
+                                    id="foss-repo"
+                                    type="text"
+                                    placeholder="Repository URL *"
+                                    class="form-input"
+                                    onblur="prefillFromGithub(this.value)"
+                                />
+                                <p class="text-xs text-zinc-500 mt-1">
+                                    Paste GitHub URL to auto-fill details
+                                </p>
+                            </div>
+                            <div>
+                                <input
+                                    id="foss-fdroid"
+                                    type="text"
+                                    placeholder="F-Droid ID (Optional)"
+                                    class="form-input"
+                                />
+                            </div>
+                        </div>
+                        <input
+                            id="foss-license"
+                            type="text"
+                            placeholder="License (e.g. GPL-3.0, MIT) *"
+                            class="form-input"
+                        />
+
+                        <!-- Proprietary Targets (alternatives for) -->
+                        <div class="pt-4 border-t border-zinc-800/50 space-y-3">
+                            <div>
+                                <p class="text-sm font-medium text-zinc-300">
+                                    Replaces (Optional)
+                                </p>
+                                <p class="text-xs text-zinc-500 mt-0.5">
+                                    Select the proprietary apps this FOSS app
+                                    replaces.
+                                </p>
+                            </div>
+                            <div class="relative">
+                                <input
+                                    id="foss-target-search"
+                                    type="text"
+                                    placeholder="Search proprietary apps..."
+                                    class="form-input"
+                                    oninput="filterFossTargets(this.value)"
+                                    onfocus="filterFossTargets(this.value)"
+                                />
+                                <div
+                                    id="foss-target-dropdown"
+                                    class="hidden absolute z-10 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl max-h-56 overflow-y-auto"
+                                ></div>
+                            </div>
+                            <div
+                                id="foss-selected-targets"
+                                class="flex flex-wrap gap-2"
+                            >
+                                <span class="text-sm text-zinc-500 italic"
+                                    >No targets selected.</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Target Form -->
+                    <div id="form-target" class="hidden space-y-4">
+                        <h3
+                            class="text-lg font-semibold border-b border-zinc-800 pb-2"
+                        >
+                            New Proprietary Target
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input
+                                id="target-name"
+                                type="text"
+                                placeholder="App Name *"
+                                class="form-input"
+                            />
+                            <div>
+                                <input
+                                    id="target-pkg"
+                                    type="text"
+                                    placeholder="Package Name *"
+                                    class="form-input"
+                                    oninput="checkDuplicate('targets', this.value, 'target-dup-warn')"
+                                />
+                                <p
+                                    id="target-dup-warn"
+                                    class="text-red-400 text-xs mt-1 hidden"
+                                >
+                                    <i
+                                        class="fas fa-exclamation-circle mr-1"
+                                    ></i
+                                    >This package already exists as a Target.
+                                </p>
+                            </div>
+                        </div>
+                        <textarea
+                            id="target-desc"
+                            rows="3"
+                            placeholder="Description (Optional)"
+                            class="form-input resize-y"
+                        ></textarea>
+                        <select id="target-cat" class="form-input bg-zinc-900">
+                            <option value="">Category (Optional)</option>
+                            <option>AI &amp; Virtual Assistant</option>
+                            <option>App Store &amp; Updater</option>
+                            <option>Bookmark</option>
+                            <option>Boot &amp; Kernel</option>
+                            <option>Browser</option>
+                            <option>Calculator</option>
+                            <option>Calendar &amp; Agenda</option>
+                            <option>Camera</option>
+                            <option>Cloud Storage &amp; File Sync</option>
+                            <option>Connectivity</option>
+                            <option>Development</option>
+                            <option>DNS &amp; Hosts</option>
+                            <option>Draw</option>
+                            <option>Ebook Reader</option>
+                            <option>Education</option>
+                            <option>Email</option>
+                            <option>File Encryption &amp; Vault</option>
+                            <option>File Transfer</option>
+                            <option>Finance</option>
+                            <option>Food &amp; Delivery</option>
+                            <option>Forum</option>
+                            <option>Gallery</option>
+                            <option>Games</option>
+                            <option>Graphics</option>
+                            <option>Habit Tracker</option>
+                            <option>Icon Pack</option>
+                            <option>Internet</option>
+                            <option>Keyboard &amp; IME</option>
+                            <option>Launcher</option>
+                            <option>Local Media Player</option>
+                            <option>Location &amp; Navigation</option>
+                            <option>Messaging</option>
+                            <option>Multimedia</option>
+                            <option>Music Practice Tool</option>
+                            <option>News</option>
+                            <option>Note</option>
+                            <option>Online Media Player</option>
+                            <option>Pass Wallet</option>
+                            <option>Password &amp; 2FA</option>
+                            <option>Phone &amp; SMS</option>
+                            <option>Podcast</option>
+                            <option>Public Transport</option>
+                            <option>Reading</option>
+                            <option>Recipe Manager</option>
+                            <option>Root Management</option>
+                            <option>Security</option>
+                            <option>Shopping</option>
+                            <option>Social Network</option>
+                            <option>Sports &amp; Health</option>
+                            <option>Storage Management</option>
+                            <option>Streaming Service</option>
+                            <option>System</option>
+                            <option>Task</option>
+                            <option>Text Editor</option>
+                            <option>Theming</option>
+                            <option>Time</option>
+                            <option>Translation &amp; Dictionary</option>
+                            <option>Unit Converter</option>
+                            <option>Voice &amp; Video Chat</option>
+                            <option>VPN &amp; Proxy</option>
+                            <option>Wallpaper</option>
+                            <option>Weather</option>
+                            <option>Writing</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Linking Form -->
+                    <div id="form-linking" class="hidden space-y-5">
+                        <div>
+                            <h3 class="text-lg font-semibold">
+                                Link FOSS Solutions to Proprietary Apps
+                            </h3>
+                            <p class="text-sm text-zinc-400 mt-1">
+                                Suggest FOSS alternatives for closed-source
+                                applications.
+                            </p>
+                        </div>
+
+                        <!-- Step 1 -->
+                        <div
+                            class="bg-zinc-800/30 p-5 rounded-xl border border-zinc-700/50"
+                        >
+                            <p
+                                class="text-xs font-bold text-zinc-300 uppercase tracking-wider mb-3"
+                            >
+                                1. Select Proprietary Target
+                            </p>
+                            <div class="relative">
+                                <input
+                                    id="link-target-search"
+                                    type="text"
+                                    placeholder="Search proprietary app..."
+                                    class="form-input"
+                                    oninput="filterTargets(this.value)"
+                                    onfocus="filterTargets(this.value)"
+                                />
+                                <div
+                                    id="target-dropdown"
+                                    class="hidden absolute z-10 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl max-h-56 overflow-y-auto"
+                                ></div>
+                            </div>
+                            <div
+                                id="selected-target-chip"
+                                class="hidden mt-3 flex items-center gap-2"
+                            >
+                                <span class="text-sm text-zinc-400"
+                                    >Selected:</span
+                                >
+                                <span
+                                    class="inline-flex items-center bg-blue-900/40 border border-blue-500/30 text-blue-200 px-3 py-1 rounded-lg text-sm gap-2"
+                                >
+                                    <span id="selected-target-text"></span>
+                                    <button
+                                        onclick="clearTarget()"
+                                        class="text-blue-300 hover:text-white"
+                                    >
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div
+                            class="bg-zinc-800/30 p-5 rounded-xl border border-zinc-700/50"
+                        >
+                            <p
+                                class="text-xs font-bold text-zinc-300 uppercase tracking-wider mb-3"
+                            >
+                                2. Select FOSS Solutions
+                            </p>
+                            <div class="relative">
+                                <input
+                                    id="link-sol-search"
+                                    type="text"
+                                    placeholder="Search FOSS solutions..."
+                                    class="form-input"
+                                    oninput="searchSolutions(this.value)"
+                                />
+                                <div
+                                    id="sol-dropdown"
+                                    class="hidden absolute z-10 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl max-h-56 overflow-y-auto"
+                                ></div>
+                            </div>
+                            <div
+                                id="selected-solutions"
+                                class="mt-3 flex flex-wrap gap-2"
+                            >
+                                <span class="text-sm text-zinc-500 italic"
+                                    >No solutions selected.</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="mt-6 flex justify-end">
+                        <button
+                            id="submit-btn"
+                            onclick="submit()"
+                            class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold flex items-center gap-2"
+                        >
+                            <i class="fas fa-paper-plane"></i>
+                            <span id="submit-label">Submit App</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- App JS -->
+        <script src="/src/js/submit.js"></script>
+    </body>
+</html>

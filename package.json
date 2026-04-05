@@ -1,0 +1,25 @@
+{
+  "name": "librefind-submission-web",
+  "version": "1.0.0",
+  "description": "A web application for submitting and linking FOSS alternatives to proprietary software.",
+  "main": "src/js/submit.js",
+  "scripts": {
+    "start": "serve public",
+    "build": "echo 'Build process not defined'",
+    "test": "echo 'No tests defined'"
+  },
+  "keywords": [
+    "FOSS",
+    "LibreFind",
+    "submission",
+    "web"
+  ],
+  "author": "Jaressen Kyle Salcedo",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0"
+  },
+  "devDependencies": {
+    "serve": "^14.0.1"
+  }
+}
