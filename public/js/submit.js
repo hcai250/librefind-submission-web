@@ -142,8 +142,7 @@ const hide = (id) => $(id) && $(id).classList.add("hidden");
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
-    // load current session if any
-    if (!db) initSupabaseClient();
+    await ensureDbReady();
 
     if (typeof window !== "undefined" && window.location.hash) {
         const hash = window.location.hash;
