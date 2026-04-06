@@ -3,29 +3,151 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>LibreFind Application</title>
-        <link rel="stylesheet" href="styles.css" />
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-        <script src="js/submit.js" defer></script>
+        <title>LibreFind Submit</title>
+
+        <!-- Vendor (match submit.html) -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            rel="stylesheet"
+        />
+
+        <!-- App CSS -->
+        <link rel="stylesheet" href="/css/styles.css" />
     </head>
     <body>
-        <header>
-            <h1>Welcome to LibreFind</h1>
-            <nav>
-                <ul>
-                    <li><a href="submit.html">Submit an App</a></li>
-                    <li><a href="https://github.com/jksalcedo/librefind/wiki/How-to-Contribute" target="_blank">Contribution Guide</a></li>
-                </ul>
-            </nav>
-        </header>
-        <main>
-            <section>
-                <h2>About LibreFind</h2>
-                <p>LibreFind is a platform for discovering and submitting free and open-source software alternatives.</p>
+        <!-- Navbar -->
+        <nav class="bg-zinc-900 border-b border-zinc-800 p-4 sticky top-0 z-30">
+            <div class="max-w-4xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="h-9 w-9 bg-zinc-800 rounded-full flex items-center justify-center border border-zinc-700"
+                        aria-hidden="true"
+                    >
+                        <i class="fas fa-leaf text-green-500"></i>
+                    </div>
+                    <span class="font-bold text-xl">LibreFind</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a
+                        href="https://github.com/jksalcedo/librefind/wiki/How-to-Contribute"
+                        target="_blank"
+                        rel="noreferrer"
+                        class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white text-sm rounded-lg border border-zinc-700"
+                    >
+                        <i class="fas fa-book mr-1"></i> Guide
+                    </a>
+                    <a
+                        href="submit.html"
+                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg font-semibold"
+                    >
+                        <i class="fas fa-paper-plane mr-1"></i> Submit
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-4xl mx-auto p-6">
+            <section class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
+                <div class="flex items-start justify-between gap-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-zinc-100 mb-2">
+                            Help people escape Big Tech.
+                        </h1>
+                        <p class="text-zinc-400 leading-relaxed">
+                            LibreFind collects FOSS alternatives to proprietary apps. This portal is for contributors to
+                            submit new apps, add proprietary targets, and link solutions.
+                        </p>
+                    </div>
+                    <div
+                        class="hidden md:flex h-12 w-12 bg-zinc-800 rounded-full items-center justify-center border border-zinc-700"
+                        aria-hidden="true"
+                    >
+                        <i class="fas fa-shield-alt text-blue-500 text-xl"></i>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                    <a
+                        href="submit.html"
+                        class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold"
+                    >
+                        <i class="fas fa-paper-plane mr-2"></i> Open submission portal
+                    </a>
+                    <a
+                        href="https://github.com/jksalcedo/librefind"
+                        target="_blank"
+                        rel="noreferrer"
+                        class="inline-flex items-center justify-center px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl border border-zinc-700"
+                    >
+                        <i class="fab fa-github mr-2"></i> View project
+                    </a>
+                </div>
             </section>
+
+            <section class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div
+                            class="h-9 w-9 bg-zinc-800 rounded-full flex items-center justify-center border border-zinc-700"
+                            aria-hidden="true"
+                        >
+                            <i class="fas fa-seedling text-green-500"></i>
+                        </div>
+                        <h2 class="font-bold text-zinc-100">Submit FOSS</h2>
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-relaxed">
+                        Add a new open-source app and optionally specify which proprietary apps it replaces.
+                    </p>
+                </div>
+
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div
+                            class="h-9 w-9 bg-zinc-800 rounded-full flex items-center justify-center border border-zinc-700"
+                            aria-hidden="true"
+                        >
+                            <i class="fas fa-bullseye text-yellow-500"></i>
+                        </div>
+                        <h2 class="font-bold text-zinc-100">Add targets</h2>
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-relaxed">
+                        Add proprietary apps so the community can propose and discover better alternatives.
+                    </p>
+                </div>
+
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div
+                            class="h-9 w-9 bg-zinc-800 rounded-full flex items-center justify-center border border-zinc-700"
+                            aria-hidden="true"
+                        >
+                            <i class="fas fa-link text-blue-500"></i>
+                        </div>
+                        <h2 class="font-bold text-zinc-100">Link apps</h2>
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-relaxed">
+                        Suggest relationships between proprietary apps and their FOSS replacements.
+                    </p>
+                </div>
+            </section>
+
+            <footer class="mt-10 text-center text-xs text-zinc-500">
+                <p>
+                    © <span id="year"></span> LibreFind ·
+                    <a
+                        class="text-zinc-400 hover:text-zinc-200"
+                        href="https://github.com/jksalcedo/librefind-submission-web"
+                        target="_blank"
+                        rel="noreferrer"
+                        >submission portal</a
+                    >
+                </p>
+            </footer>
         </main>
-        <footer>
-            <p>&copy; 2023 LibreFind. All rights reserved.</p>
-        </footer>
+
+        <script>
+            document.getElementById("year").textContent = new Date().getFullYear();
+        </script>
     </body>
 </html>

@@ -58,6 +58,26 @@ const SUPABASE_URL = "https://frmntglebkzkfhrqdgbm.supabase.co";
 const SUPABASE_ANON_KEY =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZybW50Z2xlYmt6a2ZocnFkZ2JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MDk5OTcsImV4cCI6MjA4NDQ4NTk5N30.E5H1WFGbgBdFyjUcDE7Hg3ajmxgXeGQyXjQQf3Ie_DA";
 
+// Minimal toast helper (used during early boot failures too)
+function showToast(msg, type = "info") {
+    const colors = {
+        error: "#dc2626",
+        success: "#16a34a",
+        warn: "#ca8a04",
+        info: "#2563eb",
+    };
+    const t = document.getElementById("toast");
+    if (!t) return;
+    t.textContent = msg;
+    t.style.background = colors[type] || colors.info;
+    t.style.display = "block";
+    t.style.opacity = "1";
+    setTimeout(() => {
+        t.style.opacity = "0";
+        setTimeout(() => (t.style.display = "none"), 300);
+    }, 4000);
+}
+
 let db = null;
 function initSupabaseClient() {
     const storage = createSupabaseStorage();
@@ -71,8 +91,29 @@ function initSupabaseClient() {
     });
 }
 
-// Initialize client on load
-initSupabaseClient();
+async function waitForSupabaseSdk({ timeoutMs = 8000 } = {}) {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+        if (window.supabase && typeof window.supabase.createClient === "function") return;
+        await new Promise((r) => setTimeout(r, 50));
+    }
+    throw new Error(
+        "Supabase SDK didn't load. If you're using tracking protection/ad-blocking, allow cdn.jsdelivr.net, then refresh.",
+    );
+}
+
+// Initialize client on load (don't hard-crash if the CDN is blocked/delayed)
+(async () => {
+    try {
+        await waitForSupabaseSdk();
+        initSupabaseClient();
+    } catch (e) {
+        console.error(e);
+        if (typeof showToast === "function") {
+            showToast(e?.message || "App failed to load. Please refresh.", "error");
+        }
+    }
+})();
 
 // ── State ──────────────────────────────────────────────────────────────────
 let currentUser = null;
@@ -90,23 +131,7 @@ const val = (id) => ($(id) ? $(id).value.trim() : "");
 const show = (id) => $(id) && $(id).classList.remove("hidden");
 const hide = (id) => $(id) && $(id).classList.add("hidden");
 
-function showToast(msg, type = "info") {
-    const colors = {
-        error: "#dc2626",
-        success: "#16a34a",
-        warn: "#ca8a04",
-        info: "#2563eb",
-    };
-    const t = $("toast");
-    t.textContent = msg;
-    t.style.background = colors[type] || colors.info;
-    t.style.display = "block";
-    t.style.opacity = "1";
-    setTimeout(() => {
-        t.style.opacity = "0";
-        setTimeout(() => (t.style.display = "none"), 300);
-    }, 4000);
-}
+// (showToast is defined above for early-boot errors)
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
