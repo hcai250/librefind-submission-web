@@ -621,13 +621,16 @@
         </script>
         <script src="/js/submit.js"></script>
         <script>
-            // Ensure inline onclick handlers always resolve (some setups/modules can hide globals)
             if (typeof login === "function") window.login = login;
             if (typeof logout === "function") window.logout = logout;
             if (typeof toggleRegister === "function") window.toggleRegister = toggleRegister;
             if (typeof loginWithGithub === "function") window.loginWithGithub = loginWithGithub;
             if (typeof submit === "function") window.submit = submit;
             if (typeof switchTab === "function") window.switchTab = switchTab;
+
+            document.getElementById("auth-btn")?.addEventListener("click", login);
+            document.getElementById("github-btn")?.addEventListener("click", loginWithGithub);
+            document.getElementById("toggle-register")?.addEventListener("click", toggleRegister);
         </script>
     </body>
 </html>

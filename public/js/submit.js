@@ -102,6 +102,12 @@ async function waitForSupabaseSdk({ timeoutMs = 8000 } = {}) {
     );
 }
 
+async function ensureDbReady() {
+    if (db) return;
+    await waitForSupabaseSdk();
+    initSupabaseClient();
+}
+
 // Initialize client on load (don't hard-crash if the CDN is blocked/delayed)
 (async () => {
     try {
@@ -124,6 +130,7 @@ let selectedTarget = null;
 let selectedSolutions = [];
 let selectedFossTargets = [];
 let dupFlags = { foss: false, target: false };
+let selectedTargets = [];
 
 // ── DOM Helpers ────────────────────────────────────────────────────────────
 const $ = (id) => document.getElementById(id);
@@ -228,6 +235,7 @@ function applyRememberPreference() {
 }
 
 async function login() {
+    await ensureDbReady();
     const email = val("auth-email"),
         password = val("auth-password");
     if (!email || !password) return showToast("Enter email and password", "error");
@@ -241,13 +249,13 @@ async function login() {
     try {
         const { error } = isRegistering
             ? await db.auth.signUp({
-                  email,
-                  password,
-                  options: {
-                      emailRedirectTo:
-                          window.location.origin + window.location.pathname,
-                  },
-              })
+                email,
+                password,
+                options: {
+                    emailRedirectTo:
+                        window.location.origin + window.location.pathname,
+                },
+            })
             : await db.auth.signInWithPassword({ email, password });
         if (error) throw error;
 
@@ -279,6 +287,7 @@ async function logout() {
 }
 
 async function loginWithGithub() {
+    await ensureDbReady();
     // apply the remember preference first so storage choice is set before the OAuth redirect flow
     applyRememberPreference();
 
